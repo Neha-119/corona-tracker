@@ -1,0 +1,120 @@
+### //HTML code
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Corona Cases</title>
+    <link rel="stylesheet" type="text/css" href="corona.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Corona Tracker</h1>
+    <form action="/" method="post">
+      <label for="stateInput">State Name: </label>
+      <input list="names" id = "stateInput" type="text" name="stateName">
+      <button type="submit">Submit</button>
+      <datalist id="names">
+      <option value="Andhra Pradesh">Andhra Pradesh</option>
+      <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+      <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+      <option value="Assam">Assam</option>
+      <option value="Bihar">Bihar</option>
+      <option value="Chandigarh">Chandigarh</option>
+      <option value="Chhattisgarh">Chhattisgarh</option>
+      <option value="Dadar and Nagar Haveli and Daman and Diu">Dadar and Nagar Haveli and Daman and Diu</option>
+      <option value="Delhi">Delhi</option>
+      <option value="Goa">Goa</option>
+      <option value="Gujarat">Gujrat</option>
+      <option value="Haryana">Haryana</option>
+      <option value="Himachal Pradesh">Himachal Pradesh</option>
+      <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+      <option value="Jharkhand">Jharkhand</option>
+      <option value="Karnataka">Karnataka</option>
+      <option value="Kerala">Kerala</option>
+      <option value="Ladakh">Ladakh</option>
+      <option value="Madhya Pradesh">Madhya Pradesh</option>
+      <option value="Maharashtra">Maharashtra</option>
+      <option value="Manipur">Manipur</option>
+      <option value="Meghalaya">Meghalaya</option>
+      <option value="Mizoram">Mizoram</option>
+      <option value="Nagaland">Nagaland</option>
+      <option value="Odisha">Odisha</option>
+      <option value="Puducherry">Puducherry</option>
+      <option value="Punjab">Punjab</option>
+      <option value="Rajasthan">Rajasthan</option>
+      <option value="Sikkim">Sikkim</option>
+      <option value="Tamil Nadu">Tamil Nadu</option>
+      <option value="Telengana">Telangana</option>
+      <option value="Tripura">Tripura</option>
+      <option value="Uttar Pradesh">Uttar Pradesh</option>
+      <option value="Uttarakhand">Uttrakhand</option>
+      <option value="West Bengal">West Bengal</option>
+      </datalist>
+    </form>
+    <script type="text/javascript" src="app2.js"></script>
+  </body>
+</html>
+
+      
+### //CSS code
+body{
+  background-color: lavender;
+  margin:0;
+  text-align:center;
+  font-family: 'Merriweather',serif;
+}
+h1{
+  font-size: 5.625rem;
+  margin:50px auto 0 auto;
+  font-family: 'Montserrat',sans-serif;
+  color:  #66BFBF;
+  line-height: 2;
+}
+
+### //JS code
+//jshint esversion:6
+
+const express = require("express");
+const bodyParser = require("body-parser");
+const https = require("https");
+const app = express();
+app.use(bodyParser.urlencoded({extended:true}));
+
+app.get("/",function(req,res){
+  res.sendFile(__dirname + "/index11.html");
+});
+app.post("/",function(req,res){
+  const query = req.body.stateName;
+  const url = "https://api.apify.com/v2/key-value-stores/toDWvRj1JpTXiM8FF/records/LATEST?disableRedirect=true";
+  https.get(url,function(response){
+    response.on("data",function(data){
+      const regionData = JSON.parse(data);
+          var objCount = regionData.regionData.length;
+          for ( var x=0; x < objCount ; x++ ) {
+              var curitem =regionData.regionData[x].region;
+              var array = new Array(curitem);
+              //console.log(array);
+                if(query === curitem){
+                var totalCases = regionData.regionData[x].totalInfected;
+                var death = regionData.regionData[x].deceased;
+                var recovered = regionData.regionData[x].recovered;
+                res.write("<h1>"+ query+ "</h1>");
+                res.write("Cases: "+ totalCases+"  ");
+                res.write("Deaths: "+ death+ "  ");
+                res.write("Recovered: "+ recovered);
+                res.send();
+              }
+          }
+});
+});
+});
+app.listen("3000",function(){
+  console.log("Server running at port 3000");
+});
+
+
+
+
+
+
+
